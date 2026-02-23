@@ -1,19 +1,26 @@
 import java.util.*;
 
 public class Main {
+
     public static void main(String[] args) {
+
         System.out.println("=== Cafeteria Billing ===");
 
-        CafeteriaSystem sys = new CafeteriaSystem();
-        sys.addToMenu(new MenuItem("M1", "Veg Thali", 80.00));
-        sys.addToMenu(new MenuItem("C1", "Coffee", 30.00));
-        sys.addToMenu(new MenuItem("S1", "Sandwich", 60.00));
+        InvoiceStore store = new FileStore();
+        TaxPolicy taxPolicy = new TaxRules();
+        DiscountPolicy discountPolicy = new DiscountRules();
+        InvoiceFormatter formatter = new InvoiceFormatter();
 
-        List<OrderLine> order = List.of(
-                new OrderLine("M1", 2),
-                new OrderLine("C1", 1)
-        );
+        CafeteriaSystem system =
+                new CafeteriaSystem(store, taxPolicy, discountPolicy, formatter);
 
-        sys.checkout("student", order);
+        system.addToMenu(new MenuItem("M1", "Veg Thali", 80.0));
+        system.addToMenu(new MenuItem("M2", "Coffee", 30.0));
+
+        List<OrderLine> lines = new ArrayList<>();
+        lines.add(new OrderLine("M1", 2));
+        lines.add(new OrderLine("M2", 1));
+
+        system.checkout("student", lines);
     }
 }
