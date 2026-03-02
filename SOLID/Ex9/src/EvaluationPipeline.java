@@ -1,0 +1,61 @@
+// public class EvaluationPipeline {
+//     // DIP violation: high-level module constructs concretes directly
+//     public void evaluate(Submission sub) {
+//         Rubric rubric = new Rubric();
+//         PlagiarismChecker pc = new PlagiarismChecker();
+//         CodeGrader grader = new CodeGrader();
+//         ReportWriter writer = new ReportWriter();
+
+//         int plag = pc.check(sub);
+//         System.out.println("PlagiarismScore=" + plag);
+
+//         int code = grader.grade(sub, rubric);
+//         System.out.println("CodeScore=" + code);
+
+//         String reportName = writer.write(sub, plag, code);
+//         System.out.println("Report written: " + reportName);
+
+//         int total = plag + code;
+//         String result = (total >= 90) ? "PASS" : "FAIL";
+//         System.out.println("FINAL: " + result + " (total=" + total + ")");
+//     }
+// }
+
+
+public class EvaluationPipeline {
+
+    private final IPlagiarismChecker pc;
+    private final ICodeGrader grader;
+    private final IReportWriter writer;
+    private final IRubricProvider rubricProvider;
+
+    public EvaluationPipeline(
+            IPlagiarismChecker pc,
+            ICodeGrader grader,
+            IReportWriter writer,
+            IRubricProvider rubricProvider) {
+
+        this.pc = pc;
+        this.grader = grader;
+        this.writer = writer;
+        this.rubricProvider = rubricProvider;
+    }
+
+    public void evaluate(Submission sub) {
+
+        Rubric rubric = rubricProvider.getRubric();
+
+        int plag = pc.check(sub);
+        System.out.println("PlagiarismScore=" + plag);
+
+        int code = grader.grade(sub, rubric);
+        System.out.println("CodeScore=" + code);
+
+        String reportName = writer.write(sub, plag, code);
+        System.out.println("Report written: " + reportName);
+
+        int total = plag + code;
+        String result = (total >= 90) ? "PASS" : "FAIL";
+        System.out.println("FINAL: " + result + " (total=" + total + ")");
+    }
+}
